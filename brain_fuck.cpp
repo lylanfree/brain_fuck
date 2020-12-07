@@ -1,5 +1,4 @@
 #include <array>
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -10,7 +9,7 @@ const int INVALID_INDEX = -2;
 std::unordered_map<int, int> brack_map;
 std::array<char, MAX_NUM> init() { return std::array<char, MAX_NUM>{{0}}; }
 
-int find_match(std::string &inputs, int index, char c) {
+int find_match(const std::string &inputs, int index, char c) {
   auto search = brack_map.find(index);
   if (search != brack_map.end())
     return search->second;
@@ -39,18 +38,9 @@ int find_match(std::string &inputs, int index, char c) {
   return INVALID_INDEX;
 }
 
-int main(int argc, char *argv[]) {
+int processBf(const std::string &inputs) {
   std::array<char, MAX_NUM> nums = init();
-  std::string inputs, line;
   int index = 0;
-  std::ifstream file("inputs.txt");
-  if (file.is_open()) {
-    while (std::getline(file, line)) {
-      if (!line.empty()) {
-        inputs += line;
-      }
-    }
-  }
   for (int i = 0; i < inputs.length(); i++) {
     char c = inputs[i];
     switch (c) {
@@ -108,4 +98,42 @@ int main(int argc, char *argv[]) {
     }
   }
   return 0;
+}
+
+std::string charProcess(const char c) {
+  std::string rest;
+  int quotient = c / 10;
+  int remainder = c % 10;
+  while (quotient) {
+    rest += "+";
+    quotient--;
+  }
+  rest += "[>++++++++++<-]>";
+  while (remainder) {
+    rest += "+";
+    remainder--;
+  }
+  rest += ".>";
+  return rest;
+}
+
+std::string processStr(std::string inputs) {
+  std::string rest;
+  for (const auto &c : inputs) {
+    rest += (charProcess(c) + "\n");
+  }
+  return rest;
+}
+
+int main(int argc, char *argv[]) {
+  std::string inputs =
+      ">++++++++\
+          [<+++++++++> - ]<.> ++++[<+++++++> - ]<+.+++++++..+++.> >\
+      ++++++[<+++++++> - ]<++.------------.> ++++++[<+++++++++> -\
+  ]<+.<.+++.------.--------.>> > ++++[<++++++++> - ] < +.";
+  processBf(inputs);
+
+  inputs = "Test encode with bf\n";
+  int rest = processBf(processStr(inputs));
+  return rest;
 }
